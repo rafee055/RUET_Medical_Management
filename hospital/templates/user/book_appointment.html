@@ -1,0 +1,169 @@
+{% extends 'navigation.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg" style="border-radius: 15px;">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="mb-1" style="color: #2c3e50;">Book Appointment</h2>
+                        <p class="text-muted">with Dr. {{ doctor.name }} ({{ doctor.special }})</p>
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="doctor-info mb-4 p-3" style="background: #f8f9fa; border-radius: 10px;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><i class="fas fa-clock mr-2"></i> Available Time: {{ doctor.available_time }}</p>
+                                <p><i class="fas fa-calendar-alt mr-2"></i> Available Days: {{ doctor.available_days }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><i class="fas fa-dollar-sign mr-2"></i> Consultation Fee: ${{ doctor.consultation_fee }}</p>
+                                <p><i class="fas fa-user-md mr-2"></i> Experience: {{ doctor.experience }} Years</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="POST" class="needs-validation" novalidate id="appointmentForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="date">Preferred Date</label>
+                            <input type="date" class="form-control" id="date" name="date" required 
+                                   min="{{ today|date:'Y-m-d' }}">
+                            <small class="form-text text-muted">Please select a date from today onwards</small>
+                            <div class="invalid-feedback">Please select a valid date</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="time">Preferred Time</label>
+                            <select class="form-control" id="time" name="time" required>
+                                <option value="">Select Time</option>
+                                {% for time in available_times %}
+                                    <option value="{{ time }}">{{ time }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">Please select a time slot</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="symptoms">Symptoms/Reason for Visit</label>
+                            <textarea class="form-control" id="symptoms" name="symptoms" rows="3" required
+                                      placeholder="Please describe your symptoms or reason for visit"></textarea>
+                            <div class="invalid-feedback">Please provide a reason for your visit</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment_method">Payment Method</label>
+                            <select class="form-control" id="payment_method" name="payment_method" required>
+                                <option value="bkash">bKash</option>
+                                <option value="rocket">Rocket</option>
+                                <option value="dbbl">DBBL</option>
+                                <option value="visa">Visa</option>
+                                <option value="mastercard">MasterCard</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                            <div class="invalid-feedback">Please select a payment method</div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="terms" required>
+                                <label class="custom-control-label" for="terms">
+                                    I confirm that all the information provided is accurate
+                                </label>
+                                <div class="invalid-feedback">You must agree before submitting</div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-5" 
+                                    style="background-color: #3498db; border: none; padding: 12px 30px;">
+                                Book Appointment
+                            </button>
+                            <a href="{% url 'doctor_list' %}" class="btn btn-outline-secondary ml-2">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+    
+    .btn-primary:hover {
+        background-color: #2980b9 !important;
+    }
+    
+    .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #3498db;
+        border-color: #3498db;
+    }
+</style>
+
+<script>
+    // Available days from the doctor's schedule
+    const availableDays = "{{ doctor.available_days }}".split(',').map(day => day.trim());
+    
+    // Set minimum date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('date');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+        
+        // Add event listener for date input
+        dateInput.addEventListener('change', function() {
+            validateSelectedDate(this);
+        });
+        
+        // Form validation
+        const form = document.getElementById('appointmentForm');
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            // Additional date validation
+            const dateInput = document.getElementById('date');
+            if (!validateSelectedDate(dateInput)) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        });
+    });
+    
+    function validateSelectedDate(dateInput) {
+        const selectedDate = new Date(dateInput.value);
+        const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
+        
+        if (!availableDays.includes(dayName)) {
+            dateInput.setCustomValidity(`Doctor is not available on ${dayName}s`);
+            return false;
+        } else {
+            dateInput.setCustomValidity('');
+            return true;
+        }
+    }
+</script>
+{% endblock %} 

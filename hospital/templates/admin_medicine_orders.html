@@ -1,0 +1,77 @@
+{% extends 'navigation.html' %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2 class="mb-4">Medicine Orders Management</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Medicine</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>{{ order.medicine.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>${{ order.total_price }}</td>
+                    <td>{{ order.order_date }}</td>
+                    <td>
+                        <span class="badge {% if order.status == 'completed' %}bg-success{% elif order.status == 'processing' %}bg-warning{% elif order.status == 'cancelled' %}bg-danger{% else %}bg-info{% endif %}">
+                            {{ order.status|title }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge {% if order.payment_status == 'done' %}bg-success{% else %}bg-warning{% endif %}">
+                            {{ order.payment_status|title }}
+                        </span>
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'update_order_status' order.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>Processing</option>
+                                <option value="completed" {% if order.status == 'completed' %}selected{% endif %}>Completed</option>
+                                <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                        </form>
+                        {% if order.status == 'pending' and order.payment_status == 'done' %}
+                        <form method="post" action="{% url 'accept_medicine_order' order.id %}" class="d-inline ms-1">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                        </form>
+                        {% elif order.status == 'pending' and order.payment_status != 'done' %}
+                        <span class="badge bg-warning ms-1">Waiting for Payment</span>
+                        {% endif %}
+                        {% if order.status == 'pending' %}
+                        <form method="post" action="{% url 'update_order_status' order.id %}" class="d-inline ms-1">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="cancelled">
+                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center">No orders found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{% url 'admin_medicine_list' %}" class="btn btn-primary">Back to Medicines</a>
+</div>
+{% endblock %} 

@@ -1,0 +1,265 @@
+{% extends 'navigation.html' %}
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Complete Your Payment</h4>
+                </div>
+                <div class="card-body">
+                    <h5>Payment Details</h5>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item"><strong>Amount:</strong> ${{ payment.amount }}</li>
+                        <li class="list-group-item"><strong>Payment Method:</strong> {{ payment.method|title }}</li>
+                        <li class="list-group-item"><strong>Status:</strong> <span class="badge {% if payment.status == 'completed' %}bg-success{% elif payment.status == 'failed' %}bg-danger{% else %}bg-warning text-dark{% endif %}">{{ payment.status|title }}</span></li>
+                    </ul>
+
+                    {% if payment.status == 'failed' and messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if payment.status == 'pending' %}
+                        {% if payment.method == 'bkash' %}
+                            <style>
+                                .bkash-bg {
+                                    background: linear-gradient(135deg, #e6007a 0%, #ffb6d5 100%);
+                                    border-radius: 16px;
+                                    color: #222;
+                                    box-shadow: 0 4px 24px rgba(230,0,122,0.10);
+                                    padding: 0;
+                                }
+                                .bkash-header {
+                                    border-radius: 16px 16px 0 0;
+                                    background: #fff;
+                                    padding: 24px 24px 8px 24px;
+                                    text-align: center;
+                                }
+                                .bkash-logo {
+                                    height: 48px;
+                                    margin-bottom: 8px;
+                                }
+                                .bkash-amount-row {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    font-size: 1.3rem;
+                                    font-weight: 600;
+                                    margin-bottom: 0.5rem;
+                                }
+                                .bkash-invoice {
+                                    font-size: 1rem;
+                                    color: #888;
+                                }
+                                .bkash-form-section {
+                                    background: linear-gradient(135deg, #e6007a 0%, #ffb6d5 100%);
+                                    border-radius: 0 0 16px 16px;
+                                    padding: 32px 24px 16px 24px;
+                                    text-align: center;
+                                }
+                                .bkash-input {
+                                    font-size: 1.2rem;
+                                    padding: 16px;
+                                    border-radius: 8px;
+                                    border: none;
+                                    width: 100%;
+                                    margin-bottom: 16px;
+                                    box-shadow: 0 2px 8px rgba(230,0,122,0.08);
+                                }
+                                .bkash-btn-row {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    margin-top: 16px;
+                                }
+                                .bkash-btn {
+                                    width: 48%;
+                                    font-size: 1.1rem;
+                                    padding: 12px 0;
+                                    border-radius: 8px;
+                                    border: none;
+                                    font-weight: 600;
+                                }
+                                .bkash-btn-close {
+                                    background: #eee;
+                                    color: #e6007a;
+                                }
+                                .bkash-btn-confirm {
+                                    background: #e6007a;
+                                    color: #fff;
+                                }
+                                .bkash-terms {
+                                    font-size: 0.95rem;
+                                    color: #fff;
+                                    margin-bottom: 8px;
+                                }
+                                .bkash-terms a {
+                                    color: #fff;
+                                    text-decoration: underline;
+                                }
+                                .bkash-helpline {
+                                    color: #e6007a;
+                                    font-weight: 600;
+                                    font-size: 1.1rem;
+                                    margin-top: 16px;
+                                }
+                                .bkash-message {
+                                    background: #fff0fa;
+                                    color: #e6007a;
+                                    border-radius: 8px;
+                                    padding: 10px 0;
+                                    margin-bottom: 12px;
+                                    font-weight: 500;
+                                }
+                                .bkash-btn-back {
+                                    background: #fff;
+                                    color: #e6007a;
+                                    border: 1px solid #e6007a;
+                                }
+                            </style>
+                            <div class="bkash-bg">
+                                <div class="bkash-header">
+                                    <img src="/static/bkash-logo.png" alt="bKash Logo" class="bkash-logo">
+                                    <div class="bkash-amount-row">
+                                        <span>{{ user.get_full_name|default:user.username }}</span>
+                                        <span>৳{{ payment.amount }}</span>
+                                    </div>
+                                    <div class="bkash-invoice">Invoice: {{ payment.id }}</div>
+                                </div>
+                                <div class="bkash-form-section">
+                                    <form id="bkashForm" method="post">
+                                        {% csrf_token %}
+                                        {% if not show_bkash_pin %}
+                                            <div style="font-size:1.1rem;font-weight:500;margin-bottom:8px;">Your bKash Account number</div>
+                                            <input type="text" class="bkash-input" id="bkashNumber" name="bkash_number" pattern="01[3-9][0-9]{8}" maxlength="11" required placeholder="e.g 01XXXXXXXXX" value="{{ bkash_number|default:'' }}">
+                                            <div class="bkash-terms">By clicking on <b>Confirm</b>, you are agreeing to the <a href="https://www.bkash.com/terms-and-conditions" target="_blank">terms &amp; conditions</a></div>
+                                            <div class="bkash-btn-row">
+                                                <a href="/" class="bkash-btn bkash-btn-close">CLOSE</a>
+                                                <button type="submit" class="bkash-btn bkash-btn-confirm">CONFIRM</button>
+                                            </div>
+                                        {% else %}
+                                            <div class="bkash-message">Number accepted. Please enter your PIN.</div>
+                                            <div style="font-size:1.1rem;font-weight:500;margin-bottom:8px;">Enter your bKash PIN</div>
+                                            <input type="password" class="bkash-input" id="bkashPin" name="bkash_pin" maxlength="6" required placeholder="Enter your bKash PIN">
+                                            <div class="bkash-btn-row">
+                                                <button type="submit" name="bkash_back" value="1" class="bkash-btn bkash-btn-back">BACK</button>
+                                                <button type="submit" class="bkash-btn bkash-btn-confirm">CONFIRM</button>
+                                            </div>
+                                        {% endif %}
+                                    </form>
+                                    <div class="bkash-helpline">
+                                        <span style="font-size:1.3rem;vertical-align:middle;">&#128222;</span> 16247
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif payment.method == 'rocket' %}
+                            <div class="mb-3">
+                                <h6>Rocket Payment</h6>
+                                <form id="rocketForm" method="post">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="rocketNumber" class="form-label">Rocket Number</label>
+                                        <input type="text" class="form-control" id="rocketNumber" name="rocket_number" pattern="01[3-9][0-9]{8}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="rocketPin" class="form-label">Rocket PIN</label>
+                                        <input type="password" class="form-control" id="rocketPin" name="rocket_pin" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Pay with Rocket</button>
+                                </form>
+                            </div>
+                        {% elif payment.method == 'dbbl' %}
+                            <div class="mb-3">
+                                <h6>DBBL Payment</h6>
+                                <form id="dbblForm" method="post">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="dbblNumber" class="form-label">DBBL Account Number</label>
+                                        <input type="text" class="form-control" id="dbblNumber" name="dbbl_number" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="dbblPin" class="form-label">DBBL PIN</label>
+                                        <input type="password" class="form-control" id="dbblPin" name="dbbl_pin" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Pay with DBBL</button>
+                                </form>
+                            </div>
+                        {% elif payment.method == 'visa' or payment.method == 'mastercard' %}
+                            <div class="mb-3">
+                                <h6>Card Payment</h6>
+                                <form id="cardForm" method="post">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="cardNumber" class="form-label">Card Number</label>
+                                        <input type="text" class="form-control" id="cardNumber" name="card_number" pattern="[0-9]{16}" required>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="expiryDate" class="form-label">Expiry Date (MM/YY)</label>
+                                                <input type="text" class="form-control" id="expiryDate" name="expiry_date" pattern="(0[1-9]|1[0-2])\/([0-9]{2})" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="cvv" class="form-label">CVV</label>
+                                                <input type="text" class="form-control" id="cvv" name="cvv" pattern="[0-9]{3,4}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cardName" class="form-label">Cardholder Name</label>
+                                        <input type="text" class="form-control" id="cardName" name="card_name" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Pay with Card</button>
+                                </form>
+                            </div>
+                        {% elif payment.method == 'cash' %}
+                            <div class="mb-3">
+                                <h6>Cash Payment</h6>
+                                <p>Please pay at the hospital counter.</p>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">Confirm Cash Payment</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-success">Payment completed! Thank you.</div>
+                        <a href="/medicine-orders/" class="btn btn-primary">Go to My Orders</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add input masking and validation
+    const forms = {
+        'bkashForm': ['bkashNumber', 'bkashPin'],
+        'rocketForm': ['rocketNumber', 'rocketPin'],
+        'dbblForm': ['dbblNumber', 'dbblPin'],
+        'cardForm': ['cardNumber', 'expiryDate', 'cvv', 'cardName']
+    };
+
+    for (const [formId, fields] of Object.entries(forms)) {
+        const form = document.getElementById(formId);
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Add loading state
+                const submitButton = this.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+
+                // Submit the form
+                this.submit();
+            });
+        }
+    }
+});
+</script>
+{% endblock %} 

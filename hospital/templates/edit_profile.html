@@ -1,0 +1,169 @@
+{% extends 'navigation.html' %}
+{% load static %}
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Edit Profile</h3>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="text-center mb-3">
+                            {% if profile.profile_picture %}
+                                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #3498db;">
+                            {% else %}
+                                <i class="fas fa-user-circle fa-4x" style="color: #3498db;"></i>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="profile_picture">Change Profile Picture</label>
+                            <input type="file" name="profile_picture" class="form-control" id="profile_picture" accept="image/*">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="first_name">First Name</label>
+                            <input type="text" name="first_name" class="form-control" id="first_name" value="{{ user.first_name }}" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" name="last_name" class="form-control" id="last_name" value="{{ user.last_name }}" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" class="form-control" id="email" value="{{ user.email }}" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" name="phone" class="form-control" id="phone" value="{{ profile.phone_number }}" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="gender">Gender</label>
+                            <select name="gender" class="form-control" id="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male" {% if profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if profile.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Location</label>
+                            <input type="text" id="location-search" class="form-control mb-2" placeholder="Search for a location...">
+                            <input type="text" name="location" id="location" class="form-control mb-2" value="{{ profile.location|default:'' }}" readonly>
+                            <input type="text" name="coordinates" id="coordinates" class="form-control mb-2" value="{{ profile.coordinates|default:'' }}" readonly>
+                            <div id="map" style="height: 300px; width: 100%; border-radius: 8px;"></div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+let map;
+let marker;
+
+function initMap() {
+    // Get default coordinates
+    let defaultLat = 25.931510;
+    let defaultLng = 88.854332;
+    
+    // If coordinates exist in profile, use them
+    const savedCoordinates = document.getElementById('coordinates').value;
+    if (savedCoordinates) {
+        const coords = savedCoordinates.split(',');
+        if (coords.length === 2) {
+            defaultLat = parseFloat(coords[0]);
+            defaultLng = parseFloat(coords[1]);
+        }
+    }
+
+    // Initialize the map
+    map = L.map('map').setView([defaultLat, defaultLng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Initialize the marker
+    marker = L.marker([defaultLat, defaultLng], {
+        draggable: true
+    }).addTo(map);
+
+    // Handle marker drag events
+    marker.on('dragend', function(event) {
+        const position = marker.getLatLng();
+        document.getElementById('coordinates').value = position.lat + ',' + position.lng;
+        reverseGeocode(position.lat, position.lng);
+    });
+
+    // Handle map click events
+    map.on('click', function(e) {
+        marker.setLatLng(e.latlng);
+        document.getElementById('coordinates').value = e.latlng.lat + ',' + e.latlng.lng;
+        reverseGeocode(e.latlng.lat, e.latlng.lng);
+    });
+
+    // Setup location search
+    const searchInput = document.getElementById('location-search');
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            searchLocation(searchInput.value);
+        }
+    });
+}
+
+function searchLocation(query) {
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                const location = data[0];
+                const lat = parseFloat(location.lat);
+                const lng = parseFloat(location.lon);
+                
+                map.setView([lat, lng], 16);
+                marker.setLatLng([lat, lng]);
+                
+                document.getElementById('coordinates').value = lat + ',' + lng;
+                document.getElementById('location').value = location.display_name;
+            } else {
+                alert('Location not found. Please try a different search term.');
+            }
+        })
+        .catch(error => {
+            console.error('Error searching location:', error);
+            alert('Error searching location. Please try again.');
+        });
+}
+
+function reverseGeocode(lat, lng) {
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('location').value = data.display_name;
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Initialize map when page loads
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+{% endblock %} 

@@ -1,0 +1,66 @@
+{% extends 'navigation.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Edit Medical Test</h3>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Test Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ test.name }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required>{{ test.description }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price ($)</label>
+                            <input type="number" class="form-control" id="price" name="price" value="{{ test.price }}" step="0.01" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="duration" class="form-label">Duration</label>
+                            <input type="text" class="form-control" id="duration" name="duration" value="{{ test.duration }}" required>
+                            <small class="text-muted">Example: 30 minutes, 1 hour</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="preparation" class="form-label">Preparation Instructions</label>
+                            <textarea class="form-control" id="preparation" name="preparation" rows="3">{{ test.preparation }}</textarea>
+                            <small class="text-muted">Leave blank if no special preparation is required</small>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="is_active" name="is_active" {% if test.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">Test is Active</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Update Test</button>
+                            <a href="{% url 'view_tests' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

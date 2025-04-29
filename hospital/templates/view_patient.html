@@ -1,0 +1,63 @@
+{% extends 'navigation.html' %}
+{% load static %}
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0">Patient Records</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle" id="example">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Patient ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Gender</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in pat %}
+                        <tr>
+                            <td>{{ i.id }}</td>
+                            <td>{{ i.name }}</td>
+                            <td>{{ i.gender }}</td>
+                            <td>{{ i.mobile }}</td>
+                            <td>{{ i.address }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ i.id }}">
+                                    Delete
+                                </button>
+
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="confirmDeleteModal{{ i.id }}" tabindex="-1" aria-labelledby="confirmDeleteLabel{{ i.id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmDeleteLabel{{ i.id }}">Confirm Deletion</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete patient <strong>{{ i.name }}</strong>?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <a href="{% url 'delete_patient' i.id %}" class="btn btn-danger">Yes, Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Modal -->
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

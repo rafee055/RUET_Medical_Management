@@ -1,0 +1,33 @@
+{% extends 'navigation.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            {% if medicine.image %}
+            <img src="{{ medicine.image.url }}" class="img-fluid rounded" alt="{{ medicine.name }}">
+            {% else %}
+            <img src="{% static 'images/default-medicine.jpg' %}" class="img-fluid rounded" alt="Default Medicine">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h2>{{ medicine.name }}</h2>
+            <p class="text-muted">Manufacturer: {{ medicine.manufacturer }}</p>
+            <p><strong>Price:</strong> ${{ medicine.price }}</p>
+            <p><strong>Stock Available:</strong> {{ medicine.quantity }}</p>
+            <p><strong>Expiry Date:</strong> {{ medicine.expiry_date }}</p>
+            <hr>
+            <h4>Description</h4>
+            <p>{{ medicine.description }}</p>
+            <hr>
+            {% if medicine.quantity > 0 %}
+            <a href="{% url 'order_medicine' medicine.id %}" class="btn btn-primary">Order Now</a>
+            {% else %}
+            <button class="btn btn-secondary" disabled>Out of Stock</button>
+            {% endif %}
+            <a href="{% url 'medicine_list' %}" class="btn btn-outline-secondary">Back to Medicines</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,42 @@
+{% extends 'navigation.html' %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2 class="mb-4">My Medicine Orders</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Medicine</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.medicine.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>${{ order.total_price }}</td>
+                    <td>{{ order.order_date }}</td>
+                    <td>
+                        <span class="badge {% if order.status == 'completed' %}bg-success{% elif order.status == 'processing' %}bg-warning{% elif order.status == 'cancelled' %}bg-danger{% else %}bg-info{% endif %}">
+                            {{ order.status|title }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No orders found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{% url 'medicine_list' %}" class="btn btn-primary">Back to Medicines</a>
+</div>
+{% endblock %} 

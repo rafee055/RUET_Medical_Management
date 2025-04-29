@@ -1,0 +1,73 @@
+{% extends 'navigation.html' %}
+{% load static %}
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg" style="border-radius: 15px;">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Add Medical Test</h2>
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="form-group mb-3">
+                            <label for="name">Test Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                            <div class="invalid-feedback">Please provide a test name.</div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                            <div class="invalid-feedback">Please provide a description.</div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="price">Price ($)</label>
+                            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                            <div class="invalid-feedback">Please provide a valid price.</div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="duration">Duration</label>
+                            <input type="text" class="form-control" id="duration" name="duration" placeholder="e.g., 30 minutes, 1 hour" required>
+                            <div class="invalid-feedback">Please provide the test duration.</div>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label for="preparation">Preparation Instructions (Optional)</label>
+                            <textarea class="form-control" id="preparation" name="preparation" rows="3"></textarea>
+                            <small class="form-text text-muted">Any preparation required before the test (e.g., fasting, avoiding certain medications)</small>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-4">Add Test</button>
+                            <a href="{% url 'test_list' %}" class="btn btn-secondary ml-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %} 

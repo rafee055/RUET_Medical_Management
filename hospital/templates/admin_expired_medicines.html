@@ -1,0 +1,72 @@
+{% extends 'navigation.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Expired Medicines</h2>
+        <a href="{% url 'admin_medicine_list' %}" class="btn btn-secondary">Back to Medicines</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover" id="expiredMedicineTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Manufacturer</th>
+                    <th>Expiry Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for medicine in medicines %}
+                <tr>
+                    <td>{{ medicine.id }}</td>
+                    <td>
+                        {% if medicine.image %}
+                        <img src="{{ medicine.image.url }}" alt="{{ medicine.name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                        {% else %}
+                        <img src="{% static 'images/default-medicine.jpg' %}" alt="Default" style="width: 50px; height: 50px; object-fit: cover;">
+                        {% endif %}
+                    </td>
+                    <td>{{ medicine.name }}</td>
+                    <td>${{ medicine.price }}</td>
+                    <td>{{ medicine.quantity }}</td>
+                    <td>{{ medicine.manufacturer }}</td>
+                    <td>
+                        {{ medicine.expiry_date }}
+                        <span class="badge bg-danger ms-2">Expired</span>
+                    </td>
+                    <td>
+                        <a href="{% url 'admin_edit_medicine' medicine.id %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'admin_delete_medicine' medicine.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this medicine?')">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No expired medicines found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<style>
+    .badge {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    .table th {
+        background-color: #f8f9fa;
+    }
+    .table td {
+        vertical-align: middle;
+    }
+    .btn-sm {
+        margin-right: 5px;
+    }
+</style>
+{% endblock %} 

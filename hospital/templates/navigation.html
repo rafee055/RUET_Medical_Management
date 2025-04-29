@@ -1,0 +1,374 @@
+{% load static %}
+<html>
+<head>
+    <title>Hospital Management System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mystyle.css' %}">
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.2/css/buttons.dataTables.css">
+    
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+    <style>
+        @media (min-width: 1200px) {
+            .navbar-brand {
+                margin-left: -100px;
+            }
+        }
+    </style>
+    <style>
+        .navbar-nav .nav-link,
+        .navbar-nav .dropdown-toggle,
+        .navbar-nav .dropdown-item {
+            color: #fff !important;
+        }
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .dropdown-toggle:hover,
+        .navbar-nav .dropdown-item:hover {
+            color: #ffd700 !important;
+        }
+        .btn-outline-primary.ms-2 {
+            color: #fff !important;
+            border-color: #fff !important;
+        }
+        .btn-outline-primary.ms-2:hover {
+            background: #fff !important;
+            color: #003366 !important;
+        }
+    </style>
+    {% block extra_head %}
+    <style>
+        body.ruet-bg {
+            background: url("{% static 'images/ruet_gate.png' %}") center center/cover no-repeat fixed;
+            background-blend-mode: lighten;
+        }
+        body {
+            background: #f4f8fb !important;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            color: #22304a;
+        }
+        .card, .shadow-sm {
+            border-radius: 12px !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+            border: none !important;
+        }
+        .navbar {
+            border-bottom: 2px solid #0056b3;
+        }
+        .navbar-brand span {
+            letter-spacing: 1.5px;
+        }
+        .navbar-nav .nav-link, .navbar-nav .dropdown-item {
+            font-weight: 500;
+            color: #22304a !important;
+            transition: color 0.2s;
+        }
+        .navbar-nav .nav-link.active, .navbar-nav .nav-link:focus, .navbar-nav .nav-link:hover {
+            color: #0056b3 !important;
+        }
+        .dropdown-menu {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .btn, .btn-outline-primary {
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .btn-outline-primary {
+            border-color: #0056b3;
+            color: #0056b3;
+        }
+        .btn-outline-primary:hover {
+            background: #0056b3;
+            color: #fff;
+        }
+        .card-header {
+            background: #eaf1fb !important;
+            color: #003366 !important;
+            border-bottom: 1px solid #dbeafe !important;
+            font-weight: 600;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        .card-body {
+            background: #fff !important;
+        }
+        .list-group-item {
+            border: none !important;
+            border-radius: 6px !important;
+            margin-bottom: 6px;
+            transition: background 0.2s;
+        }
+        .list-group-item-action:hover {
+            background: #eaf1fb !important;
+            color: #0056b3 !important;
+        }
+        .bg-primary, .bg-info, .bg-success, .bg-warning, .bg-danger {
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .bg-primary {
+            background: #0056b3 !important;
+        }
+        .bg-info {
+            background: #17a2b8 !important;
+        }
+        .bg-success {
+            background: #4CAF50 !important;
+        }
+        .bg-warning {
+            background: #ffc107 !important;
+            color: #22304a !important;
+        }
+        .bg-danger {
+            background: #dc3545 !important;
+        }
+        .hover-shadow:hover {
+            box-shadow: 0 4px 16px rgba(0,86,179,0.10) !important;
+            transform: translateY(-2px) scale(1.01);
+        }
+        .display-4, h1, h2, h3, h4, h5, h6 {
+            color: #003366;
+        }
+        .fw-bold, .fw-semibold {
+            font-weight: 600 !important;
+        }
+        .lead {
+            color: #4a5a6a;
+        }
+        .text-info {
+            color: #0056b3 !important;
+        }
+        .text-muted {
+            color: #7b8ca3 !important;
+        }
+        .table {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .table th {
+            background: #eaf1fb !important;
+            color: #003366 !important;
+        }
+        .table td, .table th {
+            border: none !important;
+        }
+        .form-control, .form-select {
+            border-radius: 6px;
+            border: 1px solid #dbeafe;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 0 2px #eaf1fb;
+        }
+        .alert {
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .pagination .page-link {
+            border-radius: 6px !important;
+            color: #0056b3;
+        }
+        .pagination .page-link.active, .pagination .page-link:hover {
+            background: #0056b3;
+            color: #fff;
+        }
+    </style>
+    {% endblock %}
+    <style>
+        .navbar-nav .nav-link,
+        .navbar-nav .dropdown-toggle,
+        .navbar-nav .dropdown-item {
+            color: #fff !important;
+        }
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .dropdown-toggle:hover,
+        .navbar-nav .dropdown-item:hover {
+            color: #ffd700 !important;
+        }
+        .btn-outline-primary.ms-2 {
+            color: #fff !important;
+            border-color: #fff !important;
+        }
+        .btn-outline-primary.ms-2:hover {
+            background: #fff !important;
+            color: #003366 !important;
+        }
+    </style>
+    <style>
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: url('{% static 'images/ruet_logo.png' %}') center center no-repeat;
+        background-size: 40vw auto;
+        opacity: 0.1;
+        z-index: 0;
+        pointer-events: none;
+      }
+      body {
+        position: relative;
+        z-index: 1;
+      }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background: #003366 !important; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.336);">
+        <div class="container">
+            {% if user.is_staff %}
+                <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                    <img src="{% static 'images/ruet_logo.png' %}" alt="RUET Logo" height="40" style="margin-right: 12px; border-radius: 6px; background: #fff; padding: 2px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);">
+                    <span style="font-weight: 600; font-size: 1.3rem; color: #fff; letter-spacing: 1px;">RUET Medical Management System</span>
+                </a>
+            {% endif %}
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    {% if not user.is_authenticated or not user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">
+                            <i class="fas fa-info-circle"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}">
+                            <i class="fas fa-envelope"></i> Contact
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="doctorDropdown" role="button"
+                                data-toggle="dropdown">
+                                <i class="fas fa-user-md"></i> Doctor
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'doctor_list' %}">View Doctors</a>
+                                {% if user.is_staff %}
+                                    <a class="dropdown-item" href="{% url 'add_doctor' %}">Add Doctor</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="patientDropdown" role="button"
+                                data-toggle="dropdown">
+                                <i class="fas fa-user"></i> Patient
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'patient_list' %}">View Patients</a>
+                                {% if user.is_staff %}
+                                    <a class="dropdown-item" href="{% url 'add_patient' %}">Add Patient</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="appointmentDropdown" role="button"
+                                data-toggle="dropdown">
+                                <i class="fas fa-calendar-check"></i> Appointment
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'appointment_list' %}">View Appointments</a>
+                                {% if user.is_staff %}
+                                    <a class="dropdown-item" href="{% url 'add_appointment' %}">Add Appointment</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="testDropdown" role="button"
+                                data-toggle="dropdown">
+                                <i class="fas fa-vial"></i> Tests
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'test_list' %}">View Tests</a>
+                                {% if user.is_staff %}
+                                    <a class="dropdown-item" href="{% url 'add_test' %}">Add Test</a>
+                                    <a class="dropdown-item" href="{% url 'view_test_bookings' %}">Test Bookings</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/" target="_blank">
+                                    <i class="fas fa-cogs"></i> Admin Panel
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </li>
+                        {% if not user.is_staff %}
+                        <li class="nav-item">
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-primary ms-2">User Home</a>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">
+                                <i class="fas fa-user-plus"></i> Register
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hospital Management Header Bar -->
+    <div style="background: #0056b3; color: #fff; padding: 10px 0; text-align: center; font-size: 1.3rem; font-weight: 500; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+        <a href="{% url 'user_dashboard' %}" style="color: #fff; text-decoration: none;">
+            <i class="fas fa-hospital-alt" style="margin-right: 8px;"></i> Hospital DashBoard
+        </a>
+    </div>
+
+    {% block body %}
+    {% endblock %}
+
+    <script>
+        $(document).ready(function() {
+            // Initialize any DataTables on the page
+            if ($.fn.DataTable) {
+                $('.table').DataTable({
+                    "pageLength": 10,
+                    "ordering": true,
+                    "info": true,
+                    "searching": true
+                });
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,71 @@
+{% extends 'navigation.html' %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Edit Medicine</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Medicine Name</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="text-danger">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_price" class="form-label">Price</label>
+                            {{ form.price }}
+                            {% if form.price.errors %}
+                            <div class="text-danger">{{ form.price.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_quantity" class="form-label">Quantity</label>
+                            {{ form.quantity }}
+                            {% if form.quantity.errors %}
+                            <div class="text-danger">{{ form.quantity.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_manufacturer" class="form-label">Manufacturer</label>
+                            {{ form.manufacturer }}
+                            {% if form.manufacturer.errors %}
+                            <div class="text-danger">{{ form.manufacturer.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_expiry_date" class="form-label">Expiry Date</label>
+                            {{ form.expiry_date }}
+                            {% if form.expiry_date.errors %}
+                            <div class="text-danger">{{ form.expiry_date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_image" class="form-label">Medicine Image</label>
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                            <div class="text-danger">{{ form.image.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Medicine</button>
+                        <a href="{% url 'medicine_list' %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

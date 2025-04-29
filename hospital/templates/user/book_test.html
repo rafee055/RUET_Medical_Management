@@ -1,0 +1,62 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Book Medical Test</h4>
+                </div>
+                <div class="card-body">
+                    <div class="test-details mb-4">
+                        <h5>{{ test.name }}</h5>
+                        <p class="text-muted">{{ test.description }}</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Price:</strong> ${{ test.price }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Duration:</strong> {{ test.duration }} minutes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="date">Preferred Date</label>
+                            <input type="date" class="form-control" id="date" name="date" required 
+                                   min="{{ today|date:'Y-m-d' }}">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="time">Preferred Time</label>
+                            <input type="time" class="form-control" id="time" name="time" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="notes">Additional Notes (Optional)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="payment_method">Payment Method</label>
+                            <select class="form-control" id="payment_method" name="payment_method" required>
+                                <option value="bkash">bKash</option>
+                                <option value="rocket">Rocket</option>
+                                <option value="dbbl">DBBL</option>
+                                <option value="visa">Visa</option>
+                                <option value="mastercard">MasterCard</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Book Test</button>
+                            <a href="{% url 'test_list' %}" class="btn btn-outline-secondary">Back to Tests</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

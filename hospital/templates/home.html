@@ -1,0 +1,612 @@
+{% extends 'navigation.html' %}
+{% load static %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>
+    .background-logo {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        opacity: 0.3; /* Low opacity for subtle background effect */
+        max-width: 100%; /* Increased size for larger logo */
+        height: auto;
+        pointer-events: none; /* Prevent interaction with logo */
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<script>document.body.classList.add('ruet-bg');</script>
+<!-- Background logo -->
+<img src="{% static 'images/ruet_logo.png' %}" alt="RUET Medical Logo" class="background-logo">
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="text-center" style="
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  font-family: 'Segoe UI Black', 'Arial Black', sans-serif;
+  letter-spacing: 1.2px;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+">
+  Welcome to <span style="color: #18bc9c;">RUET Medical</span>
+</h1>
+        <p class="lead text-muted">Efficient healthcare management at your fingertips</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <h3 class="fw-bold mb-4" style="color: #188f4d !important;">Medical Insights Overview</h3>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <a href="{% url 'doctor_list' %}" class="text-decoration-none">
+                <div class="card bg-primary text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body">
+                        <!-- Container for Doctors text and icon -->
+                        <div style="
+                        background-color: white;
+                        color: #1c5186;
+                        padding: 1rem 1.5rem;
+                        border-radius: 0.75rem;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                      ">
+                            <!-- Text Content -->
+                            <div>
+                                <p style="
+                            text-transform: uppercase;
+                            margin-bottom: 0.5rem;
+                            font-weight: 800;
+                            font-size: 1.3rem;
+                            letter-spacing: 1px;
+                            color: #1c5186;
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                          ">
+                                    Doctors
+                                </p>
+                                <h2 style="
+                            font-weight: 700;
+                            font-size: 2.5rem;
+                            margin: 0;
+                            color: #2c3e50;
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                          ">
+                                    {{ doctor_count }}
+                                </h2>
+                            </div>
+                            <!-- Icon Content -->
+                            <div style="
+                          background-color: #e6f0ff;
+                          color: #1c5186;
+                          padding: 0.75rem;
+                          border-radius: 50%;
+                          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        ">
+                                <i class="fas fa-user-md fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'patient_list' %}" class="text-decoration-none">
+                <div class="card bg-success text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body">
+                        <!-- Container for Patients text and icon -->
+                        <div style="
+                        background-color: white;
+                        color: #1c5186;
+                        padding: 1rem 1.5rem;
+                        border-radius: 0.75rem;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                      ">
+                            <!-- Text Content -->
+                            <div>
+                                <p style="
+                            text-transform: uppercase;
+                            margin-bottom: 0.5rem;
+                            font-weight: 800;
+                            font-size: 1.3rem;
+                            letter-spacing: 1px;
+                            color: #1c5186;
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                          ">
+                                    Patients
+                                </p>
+                                <h2 style="
+                            font-weight: 700;
+                            font-size: 2.5rem;
+                            margin: 0;
+                            color: #2c3e50;
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                          ">
+                                    {{ patient_count }}
+                                </h2>
+                            </div>
+                            <!-- Icon Content -->
+                            <div style="
+                          background-color: #e6f3ea;
+                          color: #1c5186;
+                          padding: 0.75rem;
+                          border-radius: 50%;
+                          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        ">
+                                <i class="fas fa-users fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'appointment_list' %}" class="text-decoration-none">
+                <div class="card bg-info text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body">
+                        <!-- Combined block with icon and text side by side -->
+                        <div style="
+                        background-color: white;
+                        color: #1c5186;
+                        padding: 1rem 1.5rem;
+                        border-radius: 0.75rem;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                      ">
+                            <!-- Text Section -->
+                            <div>
+                                <p style="
+                            text-transform: uppercase;
+                            margin-bottom: 0.5rem;
+                            font-weight: 800;
+                            font-size: 1.3rem;
+                            letter-spacing: 1px;
+                            color: #1c5186;
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                          ">
+                                    Appointments
+                                </p>
+                                <h2 style="
+                            font-weight: 700;
+                            font-size: 2.5rem;
+                            margin: 0;
+                            color: #2c3e50;
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                          ">
+                                    {{ appointment_count }}
+                                </h2>
+                            </div>
+                            <!-- Icon Section -->
+                            <div style="
+                          background-color: #f0f8ff;
+                          color: #1c5186;
+                          padding: 0.75rem;
+                          border-radius: 50%;
+                          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        ">
+                                <i class="fas fa-calendar-check fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'test_list' %}" class="text-decoration-none">
+                <div class="card bg-warning text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div style="
+                        background-color: white;
+                        color: #1c5186;
+                        padding: 1rem;
+                        border-radius: 0.75rem;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                      ">
+                            <p style="
+                          text-transform: uppercase;
+                          margin-bottom: 0.5rem;
+                          font-weight: 800;
+                          font-size: 1.3rem;
+                          letter-spacing: 1px;
+                          color: #1c5186;
+                          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        ">
+                                Tests
+                            </p>
+                            <h2 style="
+                          font-weight: 700;
+                          font-size: 2.5rem;
+                          margin: 0;
+                          color: #2c3e50;
+                          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        ">
+                                {{ test_count }}
+                            </h2>
+                        </div>
+                        <i class="fas fa-vial fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Medicine Corner -->
+    <h3 class="fw-bold text-info mb-4">Medicine Corner</h3>
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <a href="/medicines/" class="text-decoration-none">
+                <div class="card bg-warning text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div style="
+                            background-color: white;
+                            color: #1c5186;
+                            padding: 1rem;
+                            border-radius: 0.75rem;
+                            box-shadow: 0 4px 12px #000000de;
+                        ">
+                            <i class="fas fa-capsules fa-3x mb-2" style="color: #8ac420;"></i> <!-- Total Medicines symbol (capsules) -->
+                            <h3 class="fw-bold mb-1">{{ total_medicines }}</h3>
+                            <p style="
+                                text-transform: uppercase;
+                                margin-bottom: 0.5rem;
+                                font-weight: 800;
+                                font-size: 1.3rem;
+                                letter-spacing: 1px;
+                                color: #6d41d3;
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            ">
+                                Total Medicines
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% if user.is_staff %}
+        <div class="col-md-4">
+            <a href="{% url 'admin_medicine_orders' %}" class="text-decoration-none">
+                <div class="card bg-warning text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div style="
+                            background-color: white;
+                            color: #1c5186;
+                            padding: 1rem;
+                            border-radius: 0.75rem;
+                            box-shadow: 0 4px 12px #000000de;
+                        ">
+                            <i class="fas fa-shopping-cart fa-3x mb-2" style="color: #ffc107;"></i>
+                            <h3 class="fw-bold mb-1">{{ pending_orders }}</h3>
+                            <p style="
+                                text-transform: uppercase;
+                                margin-bottom: 0.5rem;
+                                font-weight: 800;
+                                font-size: 1.3rem;
+                                letter-spacing: 1px;
+                                color: #6d41d3;
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            ">
+                                Orders to Accept
+                            </p>
+                            <small class="text-muted">Click to manage orders</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+        <div class="col-md-4">
+            <a href="{% url 'admin_expired_medicines' %}" class="text-decoration-none">
+                <div class="card bg-warning text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div style="
+                            background-color: white;
+                            color: #1c5186;
+                            padding: 1rem;
+                            border-radius: 0.75rem;
+                            box-shadow: 0 4px 12px #000000de;
+                        ">
+                            <i class="fas fa-calendar-times fa-3x mb-2" style="color: #9c1212;"></i> <!-- Low stock warning icon -->
+                            <h3 class="fw-bold mb-1">{{ expired_medicines }}</h3>
+                            <p style="
+                                text-transform: uppercase;
+                                margin-bottom: 0.5rem;
+                                font-weight: 800;
+                                font-size: 1.2rem;
+                                letter-spacing: 1px;
+                                color: #6d41d3;
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            ">
+                                Expired Medicines
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% if user.is_staff %}
+        <div class="col-md-4">
+            <a href="{% url 'low_stock_medicines' %}" class="text-decoration-none">
+                <div class="card bg-warning text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div style="
+                            background-color: white;
+                            color: #1c5186;
+                            padding: 1rem;
+                            border-radius: 0.75rem;
+                            box-shadow: 0 4px 12px #000000de;
+                        ">
+                            <i class="fas fa-exclamation-triangle fa-3x mb-2" style="color: #9c1212;"></i> <!-- Low stock warning icon -->
+                            <h3 class="fw-bold mb-1">{{ low_stock_medicines }}</h3>
+                            <p style="
+                                text-transform: uppercase;
+                                margin-bottom: 0.5rem;
+                                font-weight: 800;
+                                font-size: 1.3rem;
+                                letter-spacing: 1px;
+                                color: #6d41d3;
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            ">
+                                Low Stock
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% if user.is_staff %}
+    <div class="text-center mb-4">
+        <a href="{% url 'admin_add_medicine' %}" class="btn btn-custom btn-lg">
+            <i class="fas fa-plus"></i> Add Medicine
+        </a>
+    </div>
+    
+    <style>
+        .btn-custom {
+            background-color: #3b0542; /* Dark, formal blue-gray color */
+            color: #ecf0f1; /* Light text color for contrast */
+            font-weight: 600; /* Slightly bolder text */
+            border-radius: 30px; /* Rounded corners for elegance */
+            padding: 10px 25px; /* Slightly larger padding for a spacious feel */
+            text-transform: uppercase; /* Uppercase text for formal look */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            transition: all 0.3s ease; /* Smooth transition for hover effect */
+        }
+    
+        .btn-custom:hover {
+            background-color: #c6a2c7; /* Slightly lighter shade on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+            transform: translateY(-2px); /* Lift effect on hover */
+        }
+    
+        .btn-custom i {
+            margin-right: 10px; /* Space between icon and text */
+        }
+    </style>
+    {% endif %}
+
+    <!-- Test Statistics & Quick Actions -->
+    <h3 class="fw-bold text-info mb-4">Medical Test Corner</h3>
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <a href="{% url 'view_test_bookings' %}?status=pending" class="text-decoration-none">
+                <div class="card bg-warning text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div style="
+                                            background-color: white;
+                                            color: #1c5186;
+                                            padding: 1rem;
+                                            border-radius: 0.75rem;
+                                            box-shadow: 0 4px 12px #000000de;
+                                        ">
+                            <h4 class="text-warning fw-bold mb-1">{{ pending_tests }}</h4>
+                            <p style="
+                                                text-transform: uppercase;
+                                                margin-bottom: 0.5rem;
+                                                font-weight: 800;
+                                                font-size: 1.3rem;
+                                                letter-spacing: 1px;
+                                                color: #6d41d3;
+                                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                            ">Pending</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'view_test_bookings' %}?status=confirmed" class="text-decoration-none">
+                <div class="card bg-success text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div style="
+                                            background-color: white;
+                                            color: #1c5186;
+                                            padding: 1rem;
+                                            border-radius: 0.75rem;
+                                            box-shadow: 0 4px 12px #000000de;
+                                        ">
+                            <h4 class="text-success fw-bold mb-1">{{ confirmed_tests }}</h4>
+                            <p style="
+                                                text-transform: uppercase;
+                                                margin-bottom: 0.5rem;
+                                                font-weight: 800;
+                                                font-size: 1.3rem;
+                                                letter-spacing: 1px;
+                                                color: #6d41d3;
+                                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                            ">Confirmed</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'view_test_bookings' %}?status=completed" class="text-decoration-none">
+                <div class="card bg-info text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div style="
+                                            background-color: white;
+                                            color: #1c5186;
+                                            padding: 1rem;
+                                            border-radius: 0.75rem;
+                                            box-shadow: 0 4px 12px #000000de;
+                                        ">
+                            <h4 class="text-info fw-bold mb-1">{{ completed_tests }}</h4>
+                            <p style="
+                                                text-transform: uppercase;
+                                                margin-bottom: 0.5rem;
+                                                font-weight: 800;
+                                                font-size: 1.3rem;
+                                                letter-spacing: 1px;
+                                                color: #6d41d3;
+                                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                            ">Completed</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'view_test_bookings' %}" class="text-decoration-none">
+                <div class="card bg-primary text-white h-100 shadow-sm hover-shadow rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div style="
+                                            background-color: white;
+                                            color: #1c5186;
+                                            padding: 1rem;
+                                            border-radius: 0.75rem;
+                                            box-shadow: 0 4px 12px #000000de;
+                                        ">
+                            <h4 class="text-primary fw-bold mb-1">{{ test_booking_count }}</h4>
+                            <p style="
+                                                text-transform: uppercase;
+                                                margin-bottom: 0.5rem;
+                                                font-weight: 800;
+                                                font-size: 1.3rem;
+                                                letter-spacing: 1px;
+                                                color: #6d41d3;
+                                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                            ">Total</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light fw-semibold">
+                <i class="fas fa-tasks me-2"></i> Quick Actions
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="{% url 'test_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-vial me-2"></i> View Available Tests
+                    </a>
+                    <a href="{% url 'view_test_bookings' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-calendar-alt me-2"></i> Manage Test Bookings
+                    </a>
+                    <a href="{% url 'add_test' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus me-2"></i> Add New Test
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Bookings -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="fw-semibold mb-0"><i class="fas fa-clock me-2"></i> Recent Test Bookings</h5>
+            <a href="{% url 'view_test_bookings' %}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Patient</th>
+                            <th>Test</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in recent_test_bookings %}
+                        <tr class="cursor-pointer" onclick="window.location.href='{% url 'view_test_bookings' %}?id={{ booking.id }}'">
+                            <td>{{ booking.patient.name }}</td>
+                            <td>{{ booking.test.name }}</td>
+                            <td>{{ booking.date }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if booking.status == 'confirmed' %}bg-success
+                                    {% elif booking.status == 'pending' %}bg-warning
+                                    {% elif booking.status == 'cancelled' %}bg-danger
+                                    {% else %}bg-info{% endif %}">
+                                    {{ booking.status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if booking.result_pdf %}
+                                    <a href="{{ booking.result_pdf.url }}" class="btn btn-sm btn-outline-success" download onclick="event.stopPropagation();">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                {% elif booking.status == 'confirmed' %}
+                                    <a href="{% url 'upload_test_result' booking.id %}" class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation();">
+                                        <i class="fas fa-upload"></i>
+                                    </a>
+                                {% elif booking.status == 'completed' %}
+                                    <span class="text-warning"><i class="fas fa-clock"></i> Pending</span>
+                                {% else %}
+                                    <span class="text-muted"><i class="fas fa-minus"></i> N/A</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-3 text-muted">No recent test bookings</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Styling for cards -->
+<style>
+.hover-shadow {
+    transition: all 0.3s ease;
+}
+.hover-shadow:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+</style>
+{% endblock %}

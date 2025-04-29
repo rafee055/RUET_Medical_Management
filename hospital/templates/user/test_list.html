@@ -1,0 +1,165 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if is_test_list %}
+        <h2>Available Medical Tests</h2>
+    {% else %}
+        <h2>My Medical Tests</h2>
+    {% endif %}
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <select class="form-control" id="entriesPerPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                    <label for="entriesPerPage">entries per page</label>
+                </div>
+                <div class="col-md-4 ml-auto">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+                </div>
+            </div>
+
+            {% if is_test_list %}
+                <!-- Available Tests View -->
+                <div class="row">
+                    {% for test in tests %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ test.name }}</h5>
+                                <p class="card-text">{{ test.description|truncatewords:20 }}</p>
+                                <ul class="list-unstyled">
+                                    <li><strong>Price:</strong> ${{ test.price }}</li>
+                                    <li><strong>Duration:</strong> {{ test.duration }}</li>
+                                    {% if test.preparation %}
+                                    <li><strong>Preparation:</strong> {{ test.preparation|truncatewords:10 }}</li>
+                                    {% endif %}
+                                </ul>
+                                <div class="text-end">
+                                    <a href="{% url 'book_test' test.id %}" class="btn btn-primary">
+                                        <i class="fas fa-calendar-plus"></i> Book Test
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            No medical tests are available at the moment.
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- My Test Bookings View -->
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Test Name</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                                <th>Report Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in test_bookings %}
+                            <tr>
+                                <td>{{ booking.test.name }}</td>
+                                <td>{{ booking.date }}</td>
+                                <td>{{ booking.time }}</td>
+                                <td>
+                                    <span class="badge {% if booking.status == 'confirmed' %}bg-success{% elif booking.status == 'pending' %}bg-warning{% elif booking.status == 'cancelled' %}bg-danger{% else %}bg-info{% endif %}">
+                                        {{ booking.status|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if booking.status == 'pending' %}
+                                        <a href="{% url 'cancel_test' booking.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to cancel this test booking?')">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">No actions available</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if booking.result_pdf %}
+                                        <a href="{{ booking.result_pdf.url }}" class="btn btn-sm btn-success" download>
+                                            <i class="fas fa-file-pdf"></i> Download Report
+                                        </a>
+                                    {% elif booking.status == 'completed' %}
+                                        <span class="text-warning">
+                                            <i class="fas fa-clock"></i> Result Pending
+                                        </span>
+                                    {% elif booking.status == 'confirmed' %}
+                                        <span class="text-info">
+                                            <i class="fas fa-hourglass-half"></i> Test Not Completed
+                                        </span>
+                                    {% elif booking.status == 'cancelled' %}
+                                        <span class="text-danger">
+                                            <i class="fas fa-ban"></i> Test Cancelled
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">
+                                            <i class="fas fa-minus-circle"></i> Not Available
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No medical tests booked yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            {% if page_obj %}
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <p>Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries</p>
+                </div>
+                <div class="col-md-6">
+                    <nav aria-label="Page navigation" class="float-end">
+                        <ul class="pagination mb-0">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">&laquo;</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&lsaquo;</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_obj.number }}</span>
+                            </li>
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">&rsaquo;</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Low Stock Medicines</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Manufacturer</th>
+            <th>Expiry Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for med in low_stock_medicines %}
+        <tr>
+            <td>{{ med.name }}</td>
+            <td>{{ med.quantity }}</td>
+            <td>{{ med.manufacturer }}</td>
+            <td>{{ med.expiry_date }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="text-center">No low stock medicines found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %} 

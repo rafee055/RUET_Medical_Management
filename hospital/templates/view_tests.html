@@ -1,0 +1,188 @@
+{% extends 'navigation.html' %}
+{% load static %}
+{% block body %}
+<div class="container mt-4">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h2 class="mb-0">Available Medical Tests</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            {% if user.is_staff %}
+            <a href="{% url 'add_test' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Test
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <select class="form-select" id="entries-per-page">
+                <option value="10">10 entries per page</option>
+                <option value="25">25 entries per page</option>
+                <option value="50">50 entries per page</option>
+            </select>
+        </div>
+        <div class="col-md-9">
+            <input type="text" class="form-control" id="search-input" placeholder="Search tests...">
+        </div>
+    </div>
+
+    <div class="row">
+        {% for test in tests %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if user.is_staff %}
+                <div class="card-header bg-light d-flex justify-content-end">
+                    <div class="btn-group">
+                        <a href="{% url 'edit_test' test.id %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ test.id }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ test.name }}</h5>
+                    <p class="card-text">{{ test.description }}</p>
+                    <div class="test-details p-3 bg-light rounded">
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <strong>Price:</strong>
+                            </div>
+                            <div class="col-6 text-end">
+                                ${{ test.price }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <strong>Duration:</strong>
+                            </div>
+                            <div class="col-6 text-end">
+                                {{ test.duration }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <strong>Preparation:</strong>
+                                <p class="mb-0 mt-1">{{ test.preparation|default:"No special preparation required." }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    {% if not user.is_staff %}
+                    <a href="{% url 'book_test' test.id %}" class="btn btn-primary w-100">
+                        <i class="fas fa-calendar-plus"></i> Book Test
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if user.is_staff %}
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteModal{{ test.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ test.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel{{ test.id }}">Confirm Delete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete the test "{{ test.name }}"?</p>
+                        <p class="text-danger mb-0"><small>This action cannot be undone.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="{% url 'delete_test' test.id %}" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                No medical tests available at the moment.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+        border-radius: 10px;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    }
+    .test-details {
+        background-color: #f8f9fa;
+        margin-top: 15px;
+    }
+    .card-header {
+        border-bottom: none;
+        background-color: transparent;
+        padding-bottom: 0;
+    }
+    .btn-group .btn {
+        padding: 0.25rem 0.5rem;
+    }
+    .card-title {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+    .card-text {
+        color: #666;
+    }
+    .form-select, .form-control {
+        border-radius: 8px;
+    }
+    #search-input {
+        border-color: #dee2e6;
+    }
+    #search-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    }
+</style>
+
+{% block extra_js %}
+<script>
+document.getElementById('search-input').addEventListener('keyup', function(e) {
+    const searchText = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('.card');
+    
+    cards.forEach(card => {
+        const title = card.querySelector('.card-title').textContent.toLowerCase();
+        const description = card.querySelector('.card-text').textContent.toLowerCase();
+        
+        if (title.includes(searchText) || description.includes(searchText)) {
+            card.closest('.col-md-4').style.display = '';
+        } else {
+            card.closest('.col-md-4').style.display = 'none';
+        }
+    });
+});
+
+document.getElementById('entries-per-page').addEventListener('change', function(e) {
+    const limit = parseInt(e.target.value);
+    const cards = document.querySelectorAll('.col-md-4');
+    
+    cards.forEach((card, index) => {
+        if (index < limit) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %} 

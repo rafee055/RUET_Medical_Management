@@ -1,0 +1,210 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+    :root {
+        --primary-color: #0056b3;
+        --secondary-color: #003366;
+        --accent-color: #4CAF50;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --info-color: #17a2b8;
+        --light-color: #f8f9fa;
+        --dark-color: #343a40;
+    }
+
+    #header {
+        background: var(--secondary-color);
+        color: white;
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    #branding h1 {
+        color: white;
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+
+    .module h2, .module caption, .inline-group h2 {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.8rem 1rem;
+        border-radius: 4px 4px 0 0;
+    }
+
+    .module {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+    }
+
+    .dashboard #content {
+        padding: 2rem;
+    }
+
+    .dashboard .module {
+        transition: transform 0.2s ease;
+    }
+
+    .dashboard .module:hover {
+        transform: translateY(-2px);
+    }
+
+    .dashboard .module table {
+        width: 100%;
+    }
+
+    .dashboard .module table th {
+        background: var(--light-color);
+        padding: 0.8rem;
+    }
+
+    .dashboard .module table td {
+        padding: 0.8rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: var(--primary-color);
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+    }
+
+    .button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover, a.button:hover {
+        background: var(--secondary-color);
+    }
+
+    .button.default, input[type=submit].default, .submit-row input.default {
+        background: var(--accent-color);
+    }
+
+    .button.default:hover, input[type=submit].default:hover, .submit-row input.default:hover {
+        background: #3d8b40;
+    }
+
+    .delete-link {
+        background: var(--danger-color);
+    }
+
+    .delete-link:hover {
+        background: #c82333;
+    }
+
+    #user-tools {
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    #user-tools a {
+        color: white;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255,255,255,0.3);
+    }
+
+    #user-tools a:hover {
+        color: #fff;
+        border-bottom-color: white;
+    }
+
+    .breadcrumbs {
+        background: var(--light-color);
+        padding: 0.8rem 1rem;
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+    }
+
+    .object-tools {
+        margin-bottom: 1rem;
+    }
+
+    .object-tools a {
+        background: var(--primary-color);
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .object-tools a:hover {
+        background: var(--secondary-color);
+    }
+
+    .paginator {
+        background: var(--light-color);
+        padding: 0.8rem;
+        border-radius: 4px;
+        margin-top: 1.5rem;
+    }
+
+    .paginator a:link, .paginator a:visited {
+        color: var(--primary-color);
+        text-decoration: none;
+        padding: 0.3rem 0.6rem;
+        border-radius: 3px;
+    }
+
+    .paginator a:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .paginator .this-page {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.3rem 0.6rem;
+        border-radius: 3px;
+    }
+
+    .errorlist {
+        background: #fff3f3;
+        border: 1px solid #ffcdd2;
+        border-radius: 4px;
+        padding: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .success {
+        background: #e8f5e9;
+        border: 1px solid #c8e6c9;
+        border-radius: 4px;
+        padding: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .warning {
+        background: #fff3e0;
+        border: 1px solid #ffe0b2;
+        border-radius: 4px;
+        padding: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .info {
+        background: #e3f2fd;
+        border: 1px solid #bbdefb;
+        border-radius: 4px;
+        padding: 0.8rem;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <img src="{% static 'images/hospital-logo.png' %}" alt="Hospital Logo" height="40" style="vertical-align: middle; margin-right: 10px;">
+        {{ site_header|default:_('Django administration') }}
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %} 

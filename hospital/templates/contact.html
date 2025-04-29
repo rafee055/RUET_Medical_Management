@@ -1,0 +1,93 @@
+{% extends 'navigation.html' %}
+{% load static %}
+
+{% block body %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Contact Us</h3>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h4><i class="fas fa-map-marker-alt text-primary"></i> Address</h4>
+                            <p>123 Hospital Street<br>Medical District<br>City, State 12345</p>
+                            
+                            <h4><i class="fas fa-phone text-primary"></i> Phone</h4>
+                            <p>Emergency: (123) 456-7890<br>Reception: (123) 456-7891</p>
+                            
+                            <h4><i class="fas fa-envelope text-primary"></i> Email</h4>
+                            <p>info@hospital.com<br>support@hospital.com</p>
+                        </div>
+                        <div class="col-md-6">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="form-group mb-3">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="subject">Subject</label>
+                                    <input type="text" class="form-control" id="subject" name="subject" required>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="message">Message</label>
+                                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Send Message</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <h4 class="mb-3"><i class="fas fa-clock text-primary"></i> Working Hours</h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>Monday - Friday</td>
+                                            <td>8:00 AM - 8:00 PM</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Saturday</td>
+                                            <td>9:00 AM - 6:00 PM</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sunday</td>
+                                            <td>Emergency Services Only</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

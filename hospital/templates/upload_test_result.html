@@ -1,0 +1,43 @@
+{% extends 'navigation.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Upload Test Result</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6>Test Details:</h6>
+                        <p class="mb-1"><strong>Patient:</strong> {{ booking.patient.name }}</p>
+                        <p class="mb-1"><strong>Test:</strong> {{ booking.test.name }}</p>
+                        <p class="mb-1"><strong>Date:</strong> {{ booking.date }}</p>
+                        <p class="mb-0"><strong>Status:</strong> {{ booking.status|title }}</p>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="result_pdf" class="form-label">Test Result PDF</label>
+                            <input type="file" class="form-control" id="result_pdf" name="result_pdf" accept=".pdf" required>
+                            <small class="text-muted">Please upload the test result in PDF format</small>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'view_test_bookings' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload"></i> Upload Result
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,69 @@
+{% extends 'navigation.html' %}
+{% load static %}
+{% block body %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title mb-0">Add Doctor</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label for="name">Doctor Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="contact">Contact</label>
+                    <input type="text" class="form-control" id="contact" name="contact" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="special">Specialization</label>
+                    <input type="text" class="form-control" id="special" name="special" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="fee">Consultation Fee ($)</label>
+                    <input type="number" class="form-control" id="fee" name="fee" min="0" step="0.01" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="available_days">Available Days</label>
+                    <input type="text" class="form-control" id="available_days" name="available_days" placeholder="e.g. Monday,Tuesday,Wednesday" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="available_time">Available Hours</label>
+                    <input type="text" class="form-control" id="available_time" name="available_time" placeholder="e.g. 9:00-17:00" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="profile_picture">Profile Picture</label>
+                    <input type="file" class="form-control" id="profile_picture" name="profile_picture">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="experience">Experience (years)</label>
+                    <input type="number" class="form-control" id="experience" name="experience" min="0" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Add Doctor</button>
+                    <a href="{% url 'doctor_list' %}" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if error == "no" %}
+<script>
+    window.location.href = "{% url 'doctor_list' %}";
+</script>
+{% endif %}
+
+{% if error == "yes" %}
+<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+    Something went wrong. Please try again.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock %}
